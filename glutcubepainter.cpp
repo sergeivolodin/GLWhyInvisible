@@ -20,7 +20,7 @@ GLint GLUTCubePainter::faces[6][4] = {  /* Vertex indices for the 6 faces of a c
                                         {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
                                         {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
 GLfloat GLUTCubePainter::v[8][3];
-GLParams GLUTCubePainter::parameters;
+GLParams* GLUTCubePainter::parameters;
 
 void GLUTCubePainter::drawBox(void)
 {
@@ -47,7 +47,7 @@ void GLUTCubePainter::display(void)
     glLoadIdentity();
     //gluPerspective( 40, 1.0, 1.0, 10);
 
-    glFrustum(parameters.l, parameters.r, parameters.b, parameters.t, parameters.n, parameters.f);
+    glFrustum(parameters->l, parameters->r, parameters->b, parameters->t, parameters->n, parameters->f);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -58,14 +58,14 @@ void GLUTCubePainter::display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     /* Adjust cube position to be asthetic angle. */
 
-    glTranslatef(parameters.x, parameters.y, parameters.z);
+    glTranslatef(parameters->x, parameters->y, parameters->z);
     glRotatef(60, 1.0, 0.0, 0.0);
     glRotatef(-20, 0.0, 0.0, 1.0);
 
     drawBox();
     glutSwapBuffers();
 
-    qDebug() << "Displayed with" << parameters.toString();
+    qDebug() << "Displayed with" << parameters->toString();
 
 }
 
@@ -73,14 +73,14 @@ GLUTCubePainter::GLUTCubePainter()
 {
 }
 
-GLParams *GLUTCubePainter::getParameters()
+void GLUTCubePainter::setParameters(GLParams* params)
 {
-    return &parameters;
+    parameters = params;
 }
 
 void GLUTCubePainter::glutTimer(int value)
-{ Q_UNUSED(value)
-            glutPostRedisplay();
+{ Q_UNUSED(value);
+    glutPostRedisplay();
     glutTimerFunc(update_ms, glutTimer, 0);
 }
 

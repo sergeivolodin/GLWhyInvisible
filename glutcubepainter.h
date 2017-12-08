@@ -8,11 +8,11 @@ class GLUTCubePainter
 {
 public:
     GLUTCubePainter();
-    static GLParams* getParameters();
+    static void setParameters(GLParams* params);
 
     static void run();
 private:
-    static GLParams parameters;
+    static GLParams* parameters;
     static void drawBox();
     static void init();
     static void display();

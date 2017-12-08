@@ -3,7 +3,7 @@
 
 GLUTCubePainterThreaded::GLUTCubePainterThreaded()
 {
-    params = NULL;
+    params = new GLParams();
 }
 
 void GLUTCubePainterThreaded::updateParameters(GLParams new_params)
@@ -18,11 +18,11 @@ void GLUTCubePainterThreaded::updateParameters(GLParams new_params)
 
 void GLUTCubePainterThreaded::run()
 {
-    // variables must be non-initialized now
-    Q_ASSERT(params == NULL);
+    // variables must be initialized
+    Q_ASSERT(params != NULL);
 
     // obtaining parameters object
-    params = GLUTCubePainter::getParameters();
+    GLUTCubePainter::setParameters(params);
 
     // starting drawing
     GLUTCubePainter::run();

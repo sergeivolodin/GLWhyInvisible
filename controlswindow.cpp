@@ -9,6 +9,8 @@ ControlsWindow::ControlsWindow(QWidget *parent) :
     ui->setupUi(this);
     painter = new GLUTCubePainterThreaded();
     painter->start();
+
+    updateValues(0);
 }
 
 ControlsWindow::~ControlsWindow()
@@ -40,6 +42,6 @@ void ControlsWindow::updateValues(double callerNewValue)
     QVector4D res = p.project();
     QString res_str;
     QTextStream stream(&res_str);
-    stream << res.x() << " " << res.y() << " " << res.z();
+    stream << res.x() / res.w() << " " << res.y() / res.w() << " " << res.z() / res.w();
     ui->result->setText(res_str);
 }
