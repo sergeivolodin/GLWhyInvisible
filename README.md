@@ -1,4 +1,4 @@
-### OpenGL + Perspective: Why is my model invisible
+## OpenGL + Perspective: Why is my model invisible
 
 Often while developing OpenGL applications from scratch, the model becomes invisible and it's hard to understand why.
 
@@ -8,18 +8,10 @@ The resulting point in NDC is displayed as well as the preview.
 
 ![Demo of the application](/doc/demo.png?raw=true "OpenGL and parameters window")
 
-#### Build & run
+### Build & run
 **Dependencies:** Qt5, GLUT
 
-1.
-```
- $ qmake
-```
-2.
-```
- $ make -j10
-```
-3.
-```
- $ ./why_is_my_model_invisible_opengl
-```
+Build and run steps:
+1. ` $ qmake`
+2. ` $ make -j10`
+3. ` $ ./why_is_my_model_invisible_opengl`
