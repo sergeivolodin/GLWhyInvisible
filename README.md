@@ -6,4 +6,18 @@ This application is aimed at solving this issue. It allows to manually set the m
 
 The resulting point in NDC is displayed as well as the preview.
 
-Dependencies: Qt5, GLUT
+#### Build & run
+**Dependencies:** Qt5, GLUT
+
+1.
+```
+ $ qmake
+```
+2.
+```
+ $ make -j10
+```
+3.
+```
+ $ ./why_is_my_model_invisible_opengl
+```

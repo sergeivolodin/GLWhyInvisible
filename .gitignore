@@ -1,1 +1,8 @@
 *.pro.user
+*.o
+Makefile
+moc_*.cpp
+moc_*.h
+why_is_my_model_invisible_opengl
+ui_*.h
+*.stash
