@@ -4,7 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
+
+# Adding GLUT
+LIBS += -lglut -lGL -lGLU
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,10 +28,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        controlswindow.cpp
+        controlswindow.cpp \
+    glparams.cpp \
+    glutcubepainter.cpp \
+    glutcubepainterthreaded.cpp
 
 HEADERS += \
-        controlswindow.h
+        controlswindow.h \
+    glparams.h \
+    glutcubepainter.h \
+    glutcubepainterthreaded.h
 
 FORMS += \
         controlswindow.ui
