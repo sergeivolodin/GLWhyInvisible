@@ -6,6 +6,8 @@ This application is aimed at solving this issue. It allows to manually set the m
 
 The resulting point in NDC is displayed as well as the preview.
 
+![Demo of the application](/doc/demo.png?raw=true "OpenGL and parameters window")
+
 #### Build & run
 **Dependencies:** Qt5, GLUT
 
