@@ -9,24 +9,24 @@
 
 #include <GL/glut.h>
 #include "glutcubepainter.h"
+#include <QDebug>
 
 GLfloat GLUTCubePainter::light_diffuse[4] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
 GLfloat GLUTCubePainter::light_position[4] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location. */
 GLfloat GLUTCubePainter::n[6][3] = {  /* Normals for the 6 faces of a cube. */
-                            {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
-                            {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
+                                      {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
+                                      {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
 GLint GLUTCubePainter::faces[6][4] = {  /* Vertex indices for the 6 faces of a cube. */
-                              {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
-                              {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
+                                        {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
+                                        {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
 GLfloat GLUTCubePainter::v[8][3];
 GLParams GLUTCubePainter::parameters;
 
 void GLUTCubePainter::drawBox(void)
 {
-    int i;
-
-    for (i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; i++) {
         glBegin(GL_QUADS);
+        glColor3f(0.3 * i + 0.1, 0.1 * i, 0.2 * i);
         glNormal3fv(&n[i][0]);
         glVertex3fv(&v[faces[i][0]][0]);
         glVertex3fv(&v[faces[i][1]][0]);
@@ -38,44 +38,35 @@ void GLUTCubePainter::drawBox(void)
 
 void GLUTCubePainter::display(void)
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    drawBox();
-    glutSwapBuffers();
-}
-
-void GLUTCubePainter::init(void)
-{
-    /* Setup cube vertex data. */
-    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
-    v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
-    v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
-    v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
-    v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
-    v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
-
-    /* Enable a single OpenGL light. */
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
 
     /* Use depth buffering for hidden surface elimination. */
     glEnable(GL_DEPTH_TEST);
 
     /* Setup the view of the cube. */
     glMatrixMode(GL_PROJECTION);
-    gluPerspective( /* field of view in degree */ 40.0,
-                    /* aspect ratio */ 1.0,
-                    /* Z near */ 1.0, /* Z far */ 10.0);
+    glLoadIdentity();
+    //gluPerspective( 40, 1.0, 1.0, 10);
+
+    glFrustum(parameters.l, parameters.r, parameters.b, parameters.t, parameters.n, parameters.f);
+
     glMatrixMode(GL_MODELVIEW);
-    gluLookAt(0.0, 0.0, 5.0,  /* eye is at (0,0,5) */
+    glLoadIdentity();
+    gluLookAt(0.0, 0.0, 1.0,  /* eye is at (0,0,5) */
               0.0, 0.0, 0.0,      /* center is at (0,0,0) */
               0.0, 1.0, 0.);      /* up is in positive Y direction */
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     /* Adjust cube position to be asthetic angle. */
-    glTranslatef(0.0, 0.0, -1.0);
+
+    glTranslatef(parameters.x, parameters.y, parameters.z);
     glRotatef(60, 1.0, 0.0, 0.0);
     glRotatef(-20, 0.0, 0.0, 1.0);
+
+    drawBox();
+    glutSwapBuffers();
+
+    qDebug() << "Displayed with" << parameters.toString();
+
 }
 
 GLUTCubePainter::GLUTCubePainter()
@@ -87,14 +78,28 @@ GLParams *GLUTCubePainter::getParameters()
     return &parameters;
 }
 
+void GLUTCubePainter::glutTimer(int value)
+{ Q_UNUSED(value)
+            glutPostRedisplay();
+    glutTimerFunc(update_ms, glutTimer, 0);
+}
+
 void GLUTCubePainter::run()
 {
+    /* Setup cube vertex data. */
+    v[0][0] = v[1][0] = v[2][0] = v[3][0] = -1;
+    v[4][0] = v[5][0] = v[6][0] = v[7][0] = 1;
+    v[0][1] = v[1][1] = v[4][1] = v[5][1] = -1;
+    v[2][1] = v[3][1] = v[6][1] = v[7][1] = 1;
+    v[0][2] = v[3][2] = v[4][2] = v[7][2] = 1;
+    v[1][2] = v[2][2] = v[5][2] = v[6][2] = -1;
+
     int argc = 1;
     const char* argv[] = {"main", NULL};
     glutInit(&argc, (char**) argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutCreateWindow("red 3D lighted cube");
     glutDisplayFunc(display);
-    init();
+    glutTimerFunc(update_ms, glutTimer, 0);
     glutMainLoop();
 }

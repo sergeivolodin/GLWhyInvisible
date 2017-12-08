@@ -1,5 +1,6 @@
 #include "controlswindow.h"
 #include "ui_controlswindow.h"
+#include <QTextStream>
 
 ControlsWindow::ControlsWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -33,4 +34,12 @@ void ControlsWindow::updateValues(double callerNewValue)
     p.t = ui->projection_t->value();
 
     painter->updateParameters(p);
+
+
+    // projected point
+    QVector4D res = p.project();
+    QString res_str;
+    QTextStream stream(&res_str);
+    stream << res.x() << " " << res.y() << " " << res.z();
+    ui->result->setText(res_str);
 }

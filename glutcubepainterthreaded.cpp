@@ -1,15 +1,16 @@
 #include "glutcubepainterthreaded.h"
+#include <QDebug>
 
 GLUTCubePainterThreaded::GLUTCubePainterThreaded()
 {
     params = NULL;
-    painter = NULL;
 }
 
 void GLUTCubePainterThreaded::updateParameters(GLParams new_params)
 {
     Q_ASSERT(params != NULL);
-    Q_ASSERT(painter != NULL);
+
+    qDebug() << "Updating" << new_params.toString();
 
     // copying data
     *params = new_params;
@@ -19,7 +20,6 @@ void GLUTCubePainterThreaded::run()
 {
     // variables must be non-initialized now
     Q_ASSERT(params == NULL);
-    Q_ASSERT(painter == NULL);
 
     // obtaining parameters object
     params = GLUTCubePainter::getParameters();

@@ -2,6 +2,7 @@
 #define GLPARAMS_H
 
 #include <QString>
+#include <QVector4D>
 
 /*
  * This class stores the parameters from the UI
@@ -19,6 +20,7 @@ public:
     double n, f, l, r, t, b;
 
     QString toString();
+    QVector4D project();
 };
 
 #endif // GLPARAMS_H

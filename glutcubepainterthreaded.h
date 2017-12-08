@@ -8,7 +8,6 @@
 class GLUTCubePainterThreaded : public QThread
 { Q_OBJECT
 public:
-    GLUTCubePainter* painter = NULL;
     GLParams* params = NULL;
     GLUTCubePainterThreaded();
 

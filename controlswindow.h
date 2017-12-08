@@ -20,7 +20,7 @@ public:
 private:
     GLUTCubePainterThreaded* painter;
     Ui::ControlsWindow *ui;
-public slots:
+private slots:
     // called by ui on update of a value
     void updateValues(double callerNewValue);
 };
