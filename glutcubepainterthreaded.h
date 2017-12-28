@@ -8,12 +8,16 @@
 class GLUTCubePainterThreaded : public QThread
 { Q_OBJECT
 public:
-    GLParams* params = NULL;
     GLUTCubePainterThreaded();
-
     void updateParameters(GLParams new_params);
+
 private:
+    volatile GLParams params;
+    volatile int need_exit;
     void run();
+
+public slots:
+    void stopGLUT();
 };
 
 #endif // GLUTCUBEPAINTERTHREADED_H

@@ -8,6 +8,7 @@
    will write the equivalent Direct3D immediate mode program. */
 
 #include <GL/glut.h>
+#include <GL/freeglut.h>
 #include "glutcubepainter.h"
 #include <QDebug>
 
@@ -20,7 +21,8 @@ GLint GLUTCubePainter::faces[6][4] = {  /* Vertex indices for the 6 faces of a c
                                         {0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
                                         {4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3} };
 GLfloat GLUTCubePainter::v[8][3];
-GLParams* GLUTCubePainter::parameters;
+volatile GLParams* GLUTCubePainter::parameters = NULL;
+volatile int* GLUTCubePainter::need_exit = NULL;
 
 void GLUTCubePainter::drawBox(void)
 {
@@ -38,6 +40,15 @@ void GLUTCubePainter::drawBox(void)
 
 void GLUTCubePainter::display(void)
 {
+    Q_ASSERT(need_exit != NULL);
+    Q_ASSERT(parameters != NULL);
+
+    // check if we are done
+    if(*need_exit)
+    {
+        qDebug() << "Need exit";
+        glutLeaveMainLoop();
+    }
 
     /* Use depth buffering for hidden surface elimination. */
     glEnable(GL_DEPTH_TEST);
@@ -45,27 +56,22 @@ void GLUTCubePainter::display(void)
     /* Setup the view of the cube. */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //gluPerspective( 40, 1.0, 1.0, 10);
 
     glFrustum(parameters->l, parameters->r, parameters->b, parameters->t, parameters->n, parameters->f);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    //gluLookAt(0.0, 0.0, 1.0,  /* eye is at (0,0,5) */
-    //          0.0, 0.0, 0.0,      /* center is at (0,0,0) */
-    //          0.0, 1.0, 0.);      /* up is in positive Y direction */
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    /* Adjust cube position to be asthetic angle. */
 
     glTranslatef(parameters->x, parameters->y, parameters->z);
-    glRotatef(60, 1.0, 0.0, 0.0);
-    glRotatef(-20, 0.0, 0.0, 1.0);
+
+    /* Adjust cube position to be asthetic angle. */
+    //glRotatef(60, 1.0, 0.0, 0.0);
+    //glRotatef(-20, 0.0, 0.0, 1.0);
 
     drawBox();
     glutSwapBuffers();
-
-    qDebug() << "Displayed with" << parameters->toString();
 
 }
 
@@ -73,15 +79,29 @@ GLUTCubePainter::GLUTCubePainter()
 {
 }
 
-void GLUTCubePainter::setParameters(GLParams* params)
+void GLUTCubePainter::setNeedExit(volatile int *need_exit_)
 {
+    Q_ASSERT(need_exit_ != NULL);
+    need_exit = need_exit_;
+}
+
+void GLUTCubePainter::setParameters(volatile GLParams* params)
+{
+    Q_ASSERT(params != NULL);
     parameters = params;
 }
 
 void GLUTCubePainter::glutTimer(int value)
 { Q_UNUSED(value);
+    if(*need_exit == 1)
+        return;
     glutPostRedisplay();
     glutTimerFunc(update_ms, glutTimer, 0);
+}
+
+void GLUTCubePainter::quit()
+{
+    qDebug() << "Exiting GLUT";
 }
 
 void GLUTCubePainter::run()
@@ -100,6 +120,8 @@ void GLUTCubePainter::run()
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutCreateWindow("red 3D lighted cube");
     glutDisplayFunc(display);
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
     glutTimerFunc(update_ms, glutTimer, 0);
+    atexit(quit);
     glutMainLoop();
 }

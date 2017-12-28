@@ -1,6 +1,7 @@
 #ifndef CONTROLSWINDOW_H
 #define CONTROLSWINDOW_H
 
+#include <QCoreApplication>
 #include <QMainWindow>
 #include "glparams.h"
 #include "glutcubepainterthreaded.h"
@@ -17,6 +18,7 @@ public:
     explicit ControlsWindow(QWidget *parent = 0);
     ~ControlsWindow();
 
+    void setApp(QCoreApplication* app);
 private:
     GLUTCubePainterThreaded* painter;
     Ui::ControlsWindow *ui;

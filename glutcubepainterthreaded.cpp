@@ -3,27 +3,29 @@
 
 GLUTCubePainterThreaded::GLUTCubePainterThreaded()
 {
-    params = new GLParams();
+    need_exit = 0;
 }
 
 void GLUTCubePainterThreaded::updateParameters(GLParams new_params)
 {
-    Q_ASSERT(params != NULL);
-
     qDebug() << "Updating" << new_params.toString();
 
     // copying data
-    *params = new_params;
+    memcpy((void*) &params, (void*) &new_params, sizeof(GLParams));
 }
 
 void GLUTCubePainterThreaded::run()
 {
-    // variables must be initialized
-    Q_ASSERT(params != NULL);
-
     // obtaining parameters object
-    GLUTCubePainter::setParameters(params);
+    GLUTCubePainter::setParameters(&params);
+    GLUTCubePainter::setNeedExit(&need_exit);
 
     // starting drawing
     GLUTCubePainter::run();
+}
+
+void GLUTCubePainterThreaded::stopGLUT()
+{
+    qDebug() << "Stopping GLUT";
+    need_exit = 1;
 }

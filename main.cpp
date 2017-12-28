@@ -7,5 +7,7 @@ int main(int argc, char *argv[])
     ControlsWindow w;
     w.show();
 
+    w.setApp(&a);
+
     return a.exec();
 }

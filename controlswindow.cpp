@@ -7,15 +7,29 @@ ControlsWindow::ControlsWindow(QWidget *parent) :
     ui(new Ui::ControlsWindow)
 {
     ui->setupUi(this);
+
+    // start opengl thread
     painter = new GLUTCubePainterThreaded();
     painter->start();
 
+    // load data from gui for the first time
     updateValues(0);
+
+    // close Qt part on GLUT exit
+    connect(painter, SIGNAL(finished()), this, SLOT(close()));
 }
 
 ControlsWindow::~ControlsWindow()
 {
     delete ui;
+}
+
+void ControlsWindow::setApp(QCoreApplication *app)
+{
+    Q_ASSERT(app != NULL);
+
+    // close GLUT on Qt part exit
+    connect(app, SIGNAL(aboutToQuit()), painter, SLOT(stopGLUT()));
 }
 
 void ControlsWindow::updateValues(double callerNewValue)
